@@ -13,7 +13,7 @@ text_index = faiss.IndexFlatIP(d_text)       # inner-product on L2-normalized = 
 text_index.add(text_embs)
 faiss.write_index(text_index, "data/indexes/text_faiss.index")
 
-# (Optional) do the same for image embeddings
+#do the same for image embeddings
 img_embs = np.load("data/embeddings/img_embs.npy")
 d_img    = img_embs.shape[1]
 faiss.normalize_L2(img_embs)

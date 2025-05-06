@@ -1,0 +1,14 @@
+streamlit>=1.0
+openai-whisper
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio>=2.0.0
+sentence-transformers>=2.2.2
+transformers>=4.0.0
+faiss-cpu
+psycopg2-binary
+scikit-learn
+rank_bm25
+opencv-python
+pillow
+numpy
