@@ -4,22 +4,46 @@ from retrieve_pg import retrieve_pg
 
 st.title("🎥 Video Q&A with RAG")
 
-# 1) Let them choose the backend
-backend = st.radio(
-    "Choose retrieval backend:",
-    ("FAISS (in-memory)", "pgvector (PostgreSQL)")
+# 1) Retrieval type
+mode = st.radio(
+    "Mode:",
+    ("Semantic", "Lexical")
 )
+
+# 2) If semantic, pick backend
+semantic_backend = None
+if mode == "Semantic":
+    semantic_backend = st.radio(
+        "Semantic backend:",
+        ("FAISS (in-memory)", "pgvector (PostgreSQL)")
+    )
+
+# 3) If pgvector, pick index
+pg_index = None
+if semantic_backend and semantic_backend.startswith("pgvector"):
+    pg_index = st.radio("pgvector index:", ("hnsw", "ivfflat"))
+
+# 4) If lexical, pick method
+lexical_method = None
+if mode == "Lexical":
+    lexical_method = st.radio(
+        "Lexical method:",
+        ("tfidf", "bm25")
+    )
 
 query = st.text_input("Ask a question about the video:")
 
 if st.button("Search"):
-    # 2) Dispatch to the right function
-    if backend.startswith("FAISS"):
-        answers = retrieve(query, top_k=3, use_semantic=True)
-    else:
-        answers = retrieve_pg(query, top_k=3)
+    # Dispatch
+    if mode == "Semantic":
+        if semantic_backend.startswith("FAISS"):
+            answers = retrieve(query, top_k=3, semantic=True)
+        else:
+            answers = retrieve_pg(query, top_k=3, index_type=pg_index)
+    else:  # Lexical
+        answers = retrieve(query, top_k=3, lexical=True, lexical_method=lexical_method)
 
-    # 3) Display results
+    # Display
     if not answers:
         st.write("Sorry, I couldn't find an answer in the video.")
     else:
