@@ -1,0 +1,82 @@
+[
+    {
+      "question": "What is the full title of Professor Mohad's talk?",
+      "answerable": true,
+      "timestamp": 6,
+      "ground_truth_answer": "Professor Amir Mohad, American University of Beirut"
+    },
+    {
+      "question": "List the four main sections outlined in the talk’s agenda.",
+      "answerable": true,
+      "timestamp": 118,
+      "ground_truth_answer": "Token Sliding and Token Jumping"
+    },
+    {
+      "question": "What is the “buffer technique” in the context of token-jumping?",
+      "answerable": true,
+      "timestamp": 2510,
+      "ground_truth_answer": "Four"
+    },
+    {
+      "question": "In the 15-puzzle example, how many numbered tiles are there?",
+      "answerable": true,
+      "timestamp": 201,
+      "ground_truth_answer": "Fifteen"
+    },
+    {
+      "question": "What is the only allowed move in the 15-puzzle game?",
+      "answerable": true,
+      "timestamp": 226,
+      "ground_truth_answer": "Moving a number (tile) into the empty square"
+    },
+    {
+      "question": "What surprising complexity result holds for 3-color recoloring?",
+      "answerable": true,
+      "timestamp": 1210,
+      "ground_truth_answer": "The tiles 14 and 15 are swapped"
+    },
+    {
+      "question": "What name is given to the diameter of a reconfiguration graph—the worst-case shortest path?",
+      "answerable": true,
+      "timestamp": 459,
+      "ground_truth_answer": "“God's number”"
+    },
+    {
+      "question": "On bipartite graphs, what are the classical complexities of token sliding versus token jumping??",
+      "answerable": true,
+      "timestamp": 1280,
+      "ground_truth_answer": "Flip one bit at a time, while remaining a satisfying assignment"
+    },
+    {
+      "question": "Under the token-sliding rule, how may a token move on the graph?",
+      "answerable": true,
+      "timestamp": 832,
+      "ground_truth_answer": "Slide along a single edge to an adjacent vertex, preserving independence"
+    },
+    {
+      "question": "Which complexity class captures most reconfiguration problems (due to space usage)?",
+      "answerable": true,
+      "timestamp": 1076,
+      "ground_truth_answer": "PSPACE"
+    },
+    {
+        "question": "What is Professor Moawad's favorite ice cream flavor?",
+        "answerable": false
+      },
+      {
+        "question": "Which car model did the speaker drive to the seminar?",
+        "answerable": false
+      },
+      {
+        "question": "What color was the speaker's pen during the presentation?",
+        "answerable": false
+      },
+      {
+        "question": "How many windows are in the lecture room?",
+        "answerable": false
+      },
+      {
+        "question": "What brand of coffee was served at the seminar?",
+        "answerable": false
+      }
+    ]
