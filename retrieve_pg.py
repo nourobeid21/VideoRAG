@@ -1,4 +1,3 @@
-# retrieve_pg.py
 import psycopg2
 from sentence_transformers import SentenceTransformer
 
@@ -13,13 +12,15 @@ conn = psycopg2.connect(
     host="localhost"
 )
 
-def retrieve_pg(query, top_k=5, index_type="hnsw"):
+def retrieve_pg(query, top_k=5, index_type="hnsw", threshold=0.2):
     """
-    Retrieve top_k chunks from Postgres pgvector using either HNSW or IVFFLAT.
+    Retrieve top_k chunks from Postgres pgvector using either HNSW or IVFFLAT,
+    applying a score threshold filter.
     
     :param query: the user question
     :param top_k: number of results
     :param index_type: "hnsw" or "ivfflat"
+    :param threshold: minimum similarity score to include
     :returns: list of dicts with keys chunk_id, start, end, text, score, method
     """
     # 1) Embed the query
@@ -29,11 +30,9 @@ def retrieve_pg(query, top_k=5, index_type="hnsw"):
         # 2) Configure the index type
         if index_type.lower() == "hnsw":
             cur.execute("SET pgvector.hnsw.ef_search = 50;")
-            # Ensure IVFFLAT probes is unset
             cur.execute("RESET pgvector.ivfflat.probes;")
         else:
             cur.execute("SET pgvector.ivfflat.probes = 10;")
-            # Ensure HNSW ef_search is unset
             cur.execute("RESET pgvector.hnsw.ef_search;")
         
         # 3) Run the similarity query
@@ -46,9 +45,12 @@ def retrieve_pg(query, top_k=5, index_type="hnsw"):
         """, (q_emb, q_emb, top_k))
         rows = cur.fetchall()
 
-    # 4) Pack into dicts matching retrieve() interface
+    # 4) Pack into dicts, apply threshold and limit
     results = []
+    count = 0
     for chunk_id, start_s, end_s, text, score in rows:
+        if score < threshold or count >= top_k:
+            break
         results.append({
             "chunk_id": chunk_id,
             "start":    start_s,
@@ -57,4 +59,5 @@ def retrieve_pg(query, top_k=5, index_type="hnsw"):
             "score":    float(score),
             "method":   f"pgvector-{index_type.lower()}"
         })
+        count += 1
     return results

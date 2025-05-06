@@ -37,11 +37,11 @@ if st.button("Search"):
     # Dispatch
     if mode == "Semantic":
         if semantic_backend.startswith("FAISS"):
-            answers = retrieve(query, top_k=3, semantic=True)
+            answers = retrieve(query, top_k=3, semantic=True, threshold=0.2)
         else:
-            answers = retrieve_pg(query, top_k=3, index_type=pg_index)
+            answers = retrieve_pg(query, top_k=3, index_type=pg_index, threshold=0.2)
     else:  # Lexical
-        answers = retrieve(query, top_k=3, lexical=True, lexical_method=lexical_method)
+        answers = retrieve(query, top_k=3, lexical=True, lexical_method=lexical_method, threshold=0.2)
 
     # Display
     if not answers:

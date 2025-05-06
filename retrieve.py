@@ -1,4 +1,3 @@
-# retrieve.py
 import faiss, numpy as np, pickle, json
 from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
@@ -32,6 +31,7 @@ def retrieve(
     :param semantic: use FAISS semantic search
     :param lexical: use lexical search
     :param lexical_method: "tfidf" or "bm25"
+    :param threshold: minimum score to include result
     """
     results = []
 
@@ -57,29 +57,40 @@ def retrieve(
         if lexical_method == "tfidf":
             q_vec = tfidf.transform([query])
             sims  = (q_vec @ tfidf_matrix.T).toarray()[0]
-            idxs  = np.argsort(-sims)[:top_k]
-            for idx in idxs:
+            # filter by threshold and take top_k
+            candidates = [(idx, sims[idx]) for idx in np.argsort(-sims)]
+            count = 0
+            for idx, score in candidates:
+                if score < threshold or count >= top_k:
+                    break
+                c = chunks[idx]
                 results.append({
                     "chunk_id": idx,
-                    "start":    chunks[idx]["start"],
-                    "end":      chunks[idx]["end"],
-                    "text":     chunks[idx]["text"],
-                    "score":    float(sims[idx]),
+                    "start":    c["start"],
+                    "end":      c["end"],
+                    "text":     c["text"],
+                    "score":    float(score),
                     "method":   "tfidf"
                 })
+                count += 1
         else:  # bm25
             tokenized = query.split()
             scores    = bm25.get_scores(tokenized)
-            idxs      = np.argsort(-scores)[:top_k]
-            for idx in idxs:
+            candidates = [(idx, scores[idx]) for idx in np.argsort(-scores)]
+            count = 0
+            for idx, score in candidates:
+                if score < threshold or count >= top_k:
+                    break
+                c = chunks[idx]
                 results.append({
                     "chunk_id": idx,
-                    "start":    chunks[idx]["start"],
-                    "end":      chunks[idx]["end"],
-                    "text":     chunks[idx]["text"],
-                    "score":    float(scores[idx]),
+                    "start":    c["start"],
+                    "end":      c["end"],
+                    "text":     c["text"],
+                    "score":    float(score),
                     "method":   "bm25"
                 })
+                count += 1
 
     # sort by score
     results = sorted(results, key=lambda x: -x["score"])
